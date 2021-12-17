@@ -96,10 +96,12 @@ impl<KernelType: Kernel, PriorType: Prior> GaussianProcess<KernelType, PriorType
         parameters.push(self.noise.ln()); // adds noise in log-space
         let mut mean_grad = vec![0.; parameters.len()];
         let mut var_grad = vec![0.; parameters.len()];
-
+        
         let time_start = std::time::Instant::now();
+        let mut iters= 0;
         for i in 1..=max_iter
         {
+            iters = i;
             let mut gradients = self.gradient_marginal_likelihood();
             if let Some(noise_grad) = gradients.last_mut()
             {
@@ -138,10 +140,11 @@ impl<KernelType: Kernel, PriorType: Prior> GaussianProcess<KernelType, PriorType
             };
         }
 
-        /*println!("Fit done. likelihood:{} parameters:{:?} noise:{:e}",
+        println!("Fit done in {} iters. \nLikelihood:{}\nparameters:{:?}\nnoise:{:e}",
+        iters,
         self.likelihood(),
         parameters,
-        self.noise);*/
+        self.noise);
     }
 
     //-------------------------------------------------------------------------------------------------
@@ -270,9 +273,9 @@ impl<KernelType: Kernel, PriorType: Prior> GaussianProcess<KernelType, PriorType
             };
         }
 
-        /*println!("Scaled fit done. likelihood:{} parameters:{:?} noise:{:e}",
+        println!("Scaled fit done. likelihood:{} parameters:{:?} noise:{:e}",
         self.likelihood(),
         parameters,
-        self.noise);*/
+        self.noise);
     }
 }
